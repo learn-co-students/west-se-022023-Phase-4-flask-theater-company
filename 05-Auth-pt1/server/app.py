@@ -157,6 +157,17 @@ api.add_resource(Signup, '/signup')
         # 3.3.3 If found set the user_id to the session hash
         # 3.3.4 convert the user to_dict and send a response back to the client 
     #3.4 Toggle the signup form to login and test the login route
+class Login(Resource):
+    def post(self):
+        user = User.query.filter_by(name=request.get_json()['name']).first()
+        if user and user.authenticate(request.get_json()['password']):
+            session['user_id'] = user.id
+            response = make_response(user.to_dict(), 200)
+            return response
+        else:
+            raise Unauthorized
+api.add_resource(Login, '/login')
+
 
 
 # 4.✅ Create an AuthorizedSession class that inherits from Resource
@@ -165,6 +176,20 @@ api.add_resource(Signup, '/signup')
         # 4.2.1 Access the user_id from session with session.get
         # 4.2.2 Use the user id to query the user with a .filter
         # 4.2.3 If the user id is in sessions and found make a response to send to the client. else raise the Unauthorized exception (Note- Unauthorized is being imported from werkzeug.exceptions)
+class AuthorizedSession(Resource):
+    def get(self):
+        try:
+            user = User.query.filter_by(id=session['user_id']).first()
+            response = make_response(
+                user.to_dict(),
+                200
+            )
+            return response
+        except:
+            # abort(401, "Unauthorized")
+            raise Unauthorized
+        
+api.add_resource(AuthorizedSession, '/authorized')
 
 # 5.✅ Head back to client/src/App.js to restrict access to our app!
 
@@ -173,6 +198,13 @@ api.add_resource(Signup, '/signup')
     # 6.2 Create a method called delete
     # 6.3 Clear the user id in session by setting the key to None
     # 6.4 create a 204 no content response to send back to the client
+
+class Logout(Resource):
+    def delete(self):
+        session['user_id'] = None
+        response = make_response('', 204)
+        return response
+api.add_resource(Logout, '/logout')
 
 # 7.✅ Navigate to client/src/components/Navigation.js to build the logout button!
 
