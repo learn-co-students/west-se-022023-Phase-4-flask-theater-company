@@ -19,30 +19,21 @@
         # `honcho start -f Procfile.dev`
 
 from flask import Flask, request, make_response, abort, session, jsonify
-from flask_migrate import Migrate
-
-from flask_restful import Api, Resource
+from flask_restful import Resource
 from werkzeug.exceptions import NotFound, Unauthorized
 
 from flask_cors import CORS
 
-from models import db, Production, CastMember, User
+from config import app, db, api
 
-app = Flask(__name__)
+from models import Production, CastMember, User
+
 CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.json.compact = False
+
 
 # Set up:
     # generate a secrete key `python -c 'import os; print(os.urandom(16))'`
 
-app.secret_key = 'Secret Key Here!'
-
-migrate = Migrate(app, db)
-db.init_app(app)
-
-api = Api(app)
 
 class Productions(Resource):
     def get(self):
@@ -133,11 +124,27 @@ api.add_resource(ProductionByID, '/productions/<int:id>')
     # 1.1 Create a User POST route by creating a class Users that inherits from Resource
     # 1.2 Add the route '/users' with api.add_resource()
     # 1.3 Create a POST method
+class Signup(Resource):
+    def post(self):
         # 1.3.1 use .get_json() to convert the request json 
+        form_json = request.get_json()
         # 1.3.2 create a new user with the request data
+        new_user = User(
+            name=form_json['name'],
+            email=form_json['email'],
+            password_hash = form_json['password']
+        )
         # 1.3.3 add and commit the new user
+        db.session.add(new_user)
+        db.session.commit()
         # 1.3.4 Save the new users id to the session hash
+        # Adding the user id to session puts a cookie with the id on the user's browser
+        session['user_id'] = new_user.id
         # 1.3.5 Make a response and send it back to the client
+        response = make_response(new_user.to_dict(), 201)
+        return response
+    
+api.add_resource(Signup, '/signup')
 
 # 2.✅ Test this route in the client/src/components/Authentication.sj 
 
