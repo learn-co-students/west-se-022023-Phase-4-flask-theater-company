@@ -34,6 +34,21 @@ CORS(app)
 # Set up:
     # generate a secrete key `python -c 'import os; print(os.urandom(16))'`
 
+@app.before_request
+def check_if_logged():
+    # create a list of routes you DON'T want to protect, eg. authentication routes
+    open_access_list = [
+        'signup',
+        'login',
+        'logout',
+        'authorized',
+        'productions'
+    ]
+
+    if (request.endpoint) not in open_access_list and (not session.get('user_id')):
+        raise Unauthorized
+        # return {'error': '401 Unauthorized'}, 401
+
 
 class Productions(Resource):
     def get(self):
