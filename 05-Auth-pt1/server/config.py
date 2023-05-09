@@ -18,4 +18,6 @@ db.init_app(app)
 
 bcrypt = Bcrypt(app)
 
+# monkeypatch flask-rest Api class to bypass its error routing
+Api.error_router = lambda self, hnd, e: hnd(e)
 api = Api(app)

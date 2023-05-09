@@ -14,7 +14,6 @@ function Authentication({updateUser}) {
   // 3.✅ Finish building the authentication form with formik
   // if signUp is true use the path '/users' else use '/login' (we will be writing login soon)
   // Complete the post and test our '/users' route 
-  // 3.4 On a successful POST add the user to state (updateUser is passed down from app through props) and redirect to the Home page.
   
   // 3.1 create a formSchema and use yup to make some client side validations
   const formSchema = yup.object().shape({
@@ -33,18 +32,19 @@ function Authentication({updateUser}) {
     validationSchema: formSchema,
     // 3.3 on submit create a POST. 
     onSubmit: (values) => {
-        // 3.4 There is a button that toggles the component between login and sign up.
-        fetch(signUp ? '/signup' : '/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(values)
-        })
-        .then(res => {
-          if (res.ok){
-            res.json()
-            .then(user => {
+      // 3.4 There is a button that toggles the component between login and sign up.
+      fetch(signUp ? '/signup' : '/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(values)
+      })
+      .then(res => {
+        if (res.ok){
+          res.json()
+          .then(user => {
+            // 3.5 On a successful POST add the user to state (updateUser is passed down from app through props) and redirect to the Home page.
               updateUser(user)
               setErrors(null)
               history.push('/')
@@ -59,7 +59,9 @@ function Authentication({updateUser}) {
  
     return (
         <> 
-        <h2 style={{color:'red'}}> {'Errors Here!!'}</h2>
+        {/* iterate over the formik errors object to render yup validation errors. keys are derived from input names */}
+        {Object.keys(formik.errors).map(input => <h2 style={{color:'red'}}> {formik.errors[input]}</h2>)}
+        {errors && <h2 style={{color:'red'}}> {errors.message}</h2>}
         <h2>Please Log in or Sign up!</h2>
         <h2>{signUp?'Already a member?':'Not a member?'}</h2>
         <button onClick={handleClick}>{signUp?'Log In!':'Register now!'}</button>
@@ -88,6 +90,9 @@ function Authentication({updateUser}) {
 
 export default Authentication
 
+// this is a styled component created using the styled-components library
+// it lets you inject css directly into your js
+// and create custom, reusable components that are prestyled
 export const Form = styled.form`
 display:flex;
 flex-direction:column;

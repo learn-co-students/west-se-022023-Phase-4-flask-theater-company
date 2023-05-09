@@ -186,7 +186,6 @@ api.add_resource(Login, '/login')
 
 
 # 4.✅ Create an AuthorizedSession class that inherits from Resource
-    # 4.1 use api.add_resource to add an authorized route
     # 4.2 Create a get method
         # 4.2.1 Access the user_id from session with session.get
         # 4.2.2 Use the user id to query the user with a .filter
@@ -204,6 +203,7 @@ class AuthorizedSession(Resource):
             # abort(401, "Unauthorized")
             raise Unauthorized
         
+    # 4.1 use api.add_resource to add an authorized route
 api.add_resource(AuthorizedSession, '/authorized')
 
 # 5.✅ Head back to client/src/App.js to restrict access to our app!
@@ -240,6 +240,14 @@ def handle_not_found(e):
         404
     )
 
+    return response
+
+@app.errorhandler(Unauthorized)
+def handle_unauthorized(e):
+    response = make_response(
+        {"message": "Unauthorized: you must be logged in to make that request."},
+        401
+    )
     return response
 
 
