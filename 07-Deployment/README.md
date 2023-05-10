@@ -101,7 +101,7 @@
     flask db init
     flask db revision --autogenerate -m ‘Create tables’
     flask db upgrade
-  ```
+    ```
  *  Test your app locally to make sure it works by running `gunicorn --chdir server app:app`
 
 
@@ -126,3 +126,7 @@
      *  DATABASE_URI: <your render internal db url. However, replace postgres with postgresql>
   * Hit create and get a snack
   * Once deployed, the deployment url will be at the top Right of the the Web Service page. go to `<your url>/productions` to test your backend deployment. 
+
+#### Settings on Render Web service
+*  Build command: `pip install -r requirements.txt && npm install --prefix client && CI=false npm run build --prefix client`
+*  Start command: `gunicorn --chdir server app:app`
