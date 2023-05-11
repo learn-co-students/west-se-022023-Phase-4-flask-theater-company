@@ -18,7 +18,7 @@
      # In Terminal cd into the root directory, run:
         # `honcho start -f Procfile.dev`
 
-from flask import Flask, request, make_response, abort, session, jsonify
+from flask import Flask, request, make_response, abort, session, jsonify, render_template
 from flask_restful import Resource
 from werkzeug.exceptions import NotFound, Unauthorized
 
@@ -49,6 +49,10 @@ def check_if_logged():
         raise Unauthorized
         # return {'error': '401 Unauthorized'}, 401
 
+@app.route('/')
+@app.route('/<int:id>')
+def index(id=0):
+    return render_template("index.html")
 
 class Productions(Resource):
     def get(self):
