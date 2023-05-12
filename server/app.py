@@ -41,8 +41,10 @@ def check_if_logged():
         'signup',
         'login',
         'logout',
-        'authorized',
-        'productions'
+        'authorizedsession',
+        'productions',
+        'index',
+        'static'
     ]
 
     if (request.endpoint) not in open_access_list and (not session.get('user_id')):
