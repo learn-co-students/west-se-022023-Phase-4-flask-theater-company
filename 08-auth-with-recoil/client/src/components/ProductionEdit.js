@@ -1,12 +1,20 @@
-import React, {useState} from 'react'
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { useFormik } from "formik"
 import * as yup from "yup"
+import { allProductions } from '../recoil'
+import { useSetRecoilState } from 'recoil'
 
 
-function ProductionForm({updateProduction, production_edit}) {
+function ProductionForm() {
+  
   const history = useHistory()
+  const production_edit = history.location.state
+  
+  const setProductions = useSetRecoilState(allProductions)
+
+  const updateProduction = (updated_production) => setProductions(productions => productions.map(production => production.id == updated_production.id ? updated_production : production))
+
     const formSchema = yup.object().shape({
       title: yup.string().required("Must enter a title"),
       budget: yup.number().positive()
@@ -39,7 +47,7 @@ function ProductionForm({updateProduction, production_edit}) {
 
     return (
       <div className='App'>
-      {formik.errors&& Object.values(formik.errors).map(error => <h2>{error}</h2>)}
+      {formik.errors && Object.values(formik.errors).map(error => <h2>{error}</h2>)}
       <Form onSubmit={formik.handleSubmit}>
         <label>Title </label>
         <input type='text' name='title' value={formik.values.title} onChange={formik.handleChange}  />

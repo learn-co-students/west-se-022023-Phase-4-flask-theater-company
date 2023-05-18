@@ -3,12 +3,17 @@ import {useHistory} from 'react-router-dom'
 import styled from "styled-components";
 import { useFormik } from "formik"
 import * as yup from "yup"
+import { currentUser } from '../recoil'
+import { useSetRecoilState } from 'recoil'
 
 
-function Authentication({updateUser}) {
+function Authentication() {
+
   const [signUp, setSignUp] = useState(false)
-  const history = useHistory()
   const [errors, setErrors] = useState(null)
+  const history = useHistory()
+
+  const updateUser = useSetRecoilState(currentUser)
 
   const handleClick = () => setSignUp((signUp) => !signUp)
   // 3.✅ Finish building the authentication form with formik
@@ -60,11 +65,11 @@ function Authentication({updateUser}) {
     return (
         <> 
         {/* iterate over the formik errors object to render yup validation errors. keys are derived from input names */}
-        {Object.keys(formik.errors).map(input => <h2 style={{color:'red'}}> {formik.errors[input]}</h2>)}
+        {formik.errors && Object.values(formik.errors).map(error => <h2 style={{color:'red'}}> {error}</h2>)}
         {errors && <h2 style={{color:'red'}}> {errors.message}</h2>}
         <h2>Please Log in or Sign up!</h2>
-        <h2>{signUp?'Already a member?':'Not a member?'}</h2>
-        <button onClick={handleClick}>{signUp?'Log In!':'Register now!'}</button>
+        <h2>{signUp ?'Already a member?':'Not a member?'}</h2>
+        <button onClick={handleClick}>{signUp ?'Log In!':'Register now!'}</button>
         <Form onSubmit={formik.handleSubmit}>
         <label>
           Username
@@ -74,7 +79,7 @@ function Authentication({updateUser}) {
         Password
         </label>
         <input type='password' name='password' value={formik.values.password} onChange={formik.handleChange} />
-        {signUp&&(
+        {signUp && (
           <>
           <label>
           Email

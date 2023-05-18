@@ -1,9 +1,13 @@
 import styled from 'styled-components'
 import ProductionCard from './ProductionCard'
+import { allProductions } from '../recoil'  
+import { useRecoilValue } from 'recoil'
 
 
-function ProductionContainer({productions}) {
 
+function ProductionContainer() {
+    
+    const productions = useRecoilValue(allProductions)
     return (
      <div>
          <Title><span>F</span>latIron Theater <span>C</span>ompany</Title>

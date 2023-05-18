@@ -3,9 +3,15 @@ import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { useFormik } from "formik"
 import * as yup from "yup"
+import { allProductions } from '../recoil'
+import { useSetRecoilState } from 'recoil'
 
-function ProductionForm({addProduction}) {
+function ProductionForm() {
+
   const history = useHistory()
+  const setProductions = useSetRecoilState(allProductions)
+  const addProduction = (production) => setProductions(current => [...current,production])
+  
   const formSchema = yup.object().shape({
     title: yup.string().required("Must enter a title"),
     budget: yup.number().positive()

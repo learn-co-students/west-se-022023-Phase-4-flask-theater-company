@@ -3,10 +3,16 @@ import {Link} from 'react-router-dom'
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { GiHamburgerMenu } from 'react-icons/gi'
+import { currentUser } from '../recoil'
+import { useSetRecoilState } from 'recoil'
 
-function Navigation({updateUser}) {
+
+function Navigation() {
+  
  const [menu, setMenu] = useState(false)
  const history = useHistory()
+ const updateUser = useSetRecoilState(currentUser)
+
 
  // 6.✅ Build a DELETE fetch request
   //6.1 On a successful delete clear the user from state (updateUser is passed down from app via props) and redirect back to the authentication route

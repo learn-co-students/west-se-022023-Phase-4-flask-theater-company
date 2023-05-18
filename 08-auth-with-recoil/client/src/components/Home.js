@@ -1,11 +1,14 @@
 import styled from 'styled-components'
 import ProductionContainer from './ProductionContainer'
 
-function Home({productions}){
+
+function Home(){
+
+
     return(
     <div>
         <Image /> 
-        <ProductionContainer productions={productions} />
+        <ProductionContainer />
     </div>
     )
 }

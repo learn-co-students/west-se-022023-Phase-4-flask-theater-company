@@ -1,13 +1,22 @@
 import  {useParams, useHistory } from 'react-router-dom'
 import {useEffect, useState} from 'react'
 import styled from 'styled-components'
+import { allProductions } from '../recoil'
+import { useSetRecoilState } from 'recoil'
 
-function ProductionDetail({handleEdit, deleteProduction}) {
+
+function ProductionDetail() {
+  
   const [production, setProduction] = useState({cast_members:[]})
   const [error, setError] = useState(null)
   //Student Challenge: GET One 
   const params = useParams()
   const history = useHistory()
+
+  const setProductions = useSetRecoilState(allProductions)
+
+  const deleteProduction = (deleted_production) => setProductions(productions => productions.filter((production) => production.id !== deleted_production.id) )
+
   useEffect(()=>{
     fetch(`/productions/${params.id}`)
     .then(res => res.json())
@@ -24,6 +33,8 @@ function ProductionDetail({handleEdit, deleteProduction}) {
     })
   }
 
+  const handleEdit = () => history.push(`/productions/edit/${params.id}`, production)
+
   
   const {id, title, genre, image,description, cast_members} = production 
   if(error) return <h2>{error}</h2>
@@ -38,12 +49,12 @@ function ProductionDetail({handleEdit, deleteProduction}) {
               <p>{description}</p>
               <h2>Cast Members</h2>
               <ul>
-                {cast_members.map(cast => <li>{`${cast.role} : ${cast.name}`}</li>)}
+                {cast_members.map(cast => <li key={cast.id}>{`${cast.role} : ${cast.name}`}</li>)}
               </ul>
             </div>
             <img src={image}/>
           </div>
-      <button onClick={()=> handleEdit(production)} >Edit Production</button>
+      <button onClick={()=> handleEdit()} >Edit Production</button>
       <button onClick={()=> handleDelete(production)} >Delete Production</button>
 
       </CardDetail>

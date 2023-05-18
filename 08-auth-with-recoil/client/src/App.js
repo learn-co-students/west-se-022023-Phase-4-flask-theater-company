@@ -1,9 +1,9 @@
 // 📚 Review With Students:
     // Request response cycle
     //Note: This was build using v5 of react-router-dom
-import { Route, Switch, useHistory } from 'react-router-dom'
+import { Route, Switch } from 'react-router-dom'
 import {createGlobalStyle} from 'styled-components'
-import {useEffect, useState} from 'react'
+// import {useEffect, useState} from 'react'
 import Home from './components/Home'
 import ProductionForm from './components/ProductionForm'
 import ProductionEdit from './components/ProductionEdit'
@@ -11,48 +11,53 @@ import Navigation from './components/Navigation'
 import ProductionDetail from './components/ProductionDetail'
 import NotFound from './components/NotFound'
 import Authentication from './components/Authentication'
+import { currentUser } from './recoil'  
+import { useRecoilValue } from 'recoil'
 
 function App() {
-  const [productions, setProductions] = useState([])
-  const [productionEdit, setProductionEdit] = useState([])
-  const [user, setUser] = useState(null)
-  const history = useHistory()
+  // const [productions, setProductions] = useState([])
+  // const [productionEdit, setProductionEdit] = useState([])
+  // const [user, setUser] = useState(null)
 
-  useEffect(() => {
-    fetchUser()
-    fetchProductions()
-  },[])
+  const user = useRecoilValue(currentUser)
 
-  const fetchProductions = () => (
-    fetch('/productions')
-    .then(res => res.json())
-    .then(setProductions)
-  )
+  // const history = useHistory()
 
-  const fetchUser = () => {
-    // 8.✅ Create a GET fetch that goes to '/authorized'
-      // If returned successfully set the user to state and fetch our productions
-      // else set the user in state to Null
-   fetch('/authorized')
-     .then(res => {
-       if(res.ok) {
-        res.json()
-        .then(setUser)
-       } else {
-        setUser(null)
-       }
-     })
-  }
+  // useEffect(() => {
+  //   // fetchUser()
+  //   fetchProductions()
+  // },[])
+
+  // const fetchProductions = () => (
+  //   fetch('/productions')
+  //   .then(res => res.json())
+  //   .then(setProductions)
+  // )
+
+  // const fetchUser = () => {
+  //   // 8.✅ Create a GET fetch that goes to '/authorized'
+  //     // If returned successfully set the user to state and fetch our productions
+  //     // else set the user in state to Null
+  //  fetch('/authorized')
+  //    .then(res => {
+  //      if(res.ok) {
+  //       res.json()
+  //       .then(setUser)
+  //      } else {
+  //       setUser(null)
+  //      }
+  //    })
+  // }
  
-  const addProduction = (production) => setProductions(current => [...current,production])
-  const updateProduction = (updated_production) => setProductions(productions => productions.map(production => production.id == updated_production.id? updated_production : production))
-  const deleteProduction = (deleted_production) => setProductions(productions => productions.filter((production) => production.id !== deleted_production.id) )
-  const handleEdit = (production) => {
-    setProductionEdit(production)
-    history.push(`/productions/edit/${production.id}`)
-  }
+  // const addProduction = (production) => setProductions(current => [...current,production])
+  // const updateProduction = (updated_production) => setProductions(productions => productions.map(production => production.id == updated_production.id? updated_production : production))
+  // const deleteProduction = (deleted_production) => setProductions(productions => productions.filter((production) => production.id !== deleted_production.id) )
+  // const handleEdit = (production) => {
+  //   setProductionEdit(production)
+  //   history.push(`/productions/edit/${production.id}`)
+  // }
   
-  const updateUser = (user) => setUser(user)
+  // const updateUser = (user) => setUser(user)
   // 9.✅ Return a second block of JSX
     // If the user is not in state return JSX and include <GlobalStyle /> <Navigation/> and  <Authentication updateUser={updateUser}/>
     //9.1 Test out our route! Logout and try to visit other pages. Login and try to visit other pages again. Refresh the page and note that you are still logged in! 
@@ -60,29 +65,29 @@ function App() {
     <>
       <GlobalStyle />
       <Navigation />
-      <Authentication updateUser={updateUser} />
+      <Authentication />
     </>
   )
 
   return (
     <>
     <GlobalStyle />
-    <Navigation updateUser={updateUser}  handleEdit={handleEdit}/>
+    <Navigation />
       <Switch>
         <Route path='/productions/new'>
-          <ProductionForm addProduction={addProduction}/>
+          <ProductionForm />
         </Route>
-        <Route  path='/productions/edit/:id'>
-          <ProductionEdit updateProduction={updateProduction} productionEdit={productionEdit}/>
+        <Route path='/productions/edit/:id'>
+          <ProductionEdit />
         </Route>
         <Route path='/productions/:id'>
-          <ProductionDetail handleEdit={handleEdit} deleteProduction={deleteProduction} />
+          <ProductionDetail />
         </Route>
         <Route exact path='/authentication'>
-          <Authentication updateUser={updateUser}/>
+          <Authentication />
         </Route>
         <Route exact path='/'>
-          <Home  productions={productions}/>
+          <Home />
         </Route>
         <Route>
           <NotFound />
